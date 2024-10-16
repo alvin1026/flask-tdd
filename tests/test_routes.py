@@ -127,6 +127,22 @@ class TestEmployeeService(TestCase):
         self.assertEqual(new_employee["department"], test_employee.department)
         self.assertEqual(new_employee["gender"], test_employee.gender.name)
 
+    def test_update_employee(self):
+        """It should Update an existing Employee"""
+        # create an employee to update
+        test_employee = EmployeeFactory()
+        response = self.client.post(BASE_URL, json=test_employee.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # update the employee
+        new_employee = response.get_json()
+        logging.debug(new_employee)
+        new_employee["department"] = "HR"
+        response = self.client.put(f"{BASE_URL}/{new_employee['id']}", json=new_employee)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_employee = response.get_json()
+        self.assertEqual(updated_employee["department"], "HR")
+
     def test_delete_employee(self):
         """It should Delete an Employee"""
         test_employee = self._create_employees(1)[0]

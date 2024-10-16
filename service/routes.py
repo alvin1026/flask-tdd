@@ -84,6 +84,31 @@ def create_employees():
     return jsonify(employee.serialize()), status.HTTP_201_CREATED, {"location": location_url}
 
 
+@app.route("/employees/<int:employee_id>", methods=["PUT"])
+def update_employees(employee_id):
+    """
+    Update an Employee
+    """
+    app.logger.info("Request to Update an employee with id [%s]", employee_id)
+    check_content_type("application/json")
+
+    # Attempt to find the Employee and abort if not found
+    employee = Employee.find(employee_id)
+    if not employee:
+        abort(status.HTTP_404_NOT_FOUND, f"Employee with id '{employee_id}' was not found.")
+
+    # Update the Employee with the new data
+    data = request.get_json()
+    app.logger.info("Processing: %s", data)
+    employee.deserialize(data)
+
+    # Save the updates to the database
+    employee.update()
+
+    app.logger.info("Employee with ID: %d updated.", employee.id)
+    return jsonify(employee.serialize()), status.HTTP_200_OK
+
+
 @app.route("/employees/<int:employee_id>", methods=["DELETE"])
 def delete_employees(employee_id):
     """
