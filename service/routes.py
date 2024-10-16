@@ -7,7 +7,7 @@ and Delete Drivers from the online ride-sharing application.
 
 from flask import jsonify, request, url_for, abort  # noqa: F401
 from flask import current_app as app
-from service.models import Employee, Gender
+from service.models import Employee
 from service.common import status
 
 
@@ -35,31 +35,6 @@ def index():
 def list_employees():
     """Returns all Employees"""
     app.logger.info("Request for employee list")
-
-    employees = []
-
-    # Parse any arguments from the query string
-
-    department = request.args.get("department")
-    first_name = request.args.get("first_name")
-    last_name = request.args.get("last_name")
-    gender = request.args.get("gender")
-
-    # if department:
-    #     app.logger.info("Find by department: %s", department)
-    #     employees = Employee.find_by_departmnet(department)
-    # elif first_name:
-    #     app.logger.info("Find by first name: %s", first_name)
-    #     employees = Employee.find_by_first_name(first_name)
-    # elif last_name:
-    #     app.logger.info("Find by last name: %s", last_name)
-    #     employees = Employee.find_by_last_name(last_name)
-    # elif gender:
-    #     app.logger.info("Find by gender: %s", gender)
-    #     # create enum from string
-    #     employees = Employee.find_by_gender(Gender[gender.upper()])
-    # else:
-    app.logger.info("Find all")
     employees = Employee.all()
 
     results = [employee.serialize() for employee in employees]

@@ -1,8 +1,10 @@
+"""
+Test cases for Employee Model
+"""
 import os
 import logging
 from unittest import TestCase
 from unittest.mock import patch  # noqa: F401
-from datetime import date  # noqa: F401
 from wsgi import app
 from service.models import Employee, Gender, DataValidationError, db
 from tests.factories import EmployeeFactory
@@ -13,9 +15,10 @@ DATABASE_URI = os.getenv(
 
 
 class TestCaseBase(TestCase):
-
+    """Base Test Case for common setup"""
     @classmethod
     def setUpClass(cls):
+        """This runs once before the entire test suite"""
         app.config["TESTING"] = True
         app.config["DEBUG"] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
@@ -35,8 +38,9 @@ class TestCaseBase(TestCase):
 
 
 class TestEmployeeModel(TestCaseBase):
-
+    """Employee Model CRUD Tests"""
     def test_create_an_employee(self):
+        """It should Create an employee and assert that it exists"""
         employee = Employee(first_name="John", last_name="Daniel", gender=Gender.MALE, department="Engineering")
         self.assertEqual(str(employee), "<Employee John Daniel id=[None]>")
         self.assertTrue(employee is not None)
@@ -47,6 +51,7 @@ class TestEmployeeModel(TestCaseBase):
         self.assertEqual(employee.gender, Gender.FEMALE)
 
     def test_add_an_employee(self):
+        """It should Create an employee and add it to the database"""
         employees = Employee.all()
         self.assertEqual(employees, [])
         employee = Employee(first_name="John", last_name="Daniel", gender=Gender.MALE, department="Engineering")
@@ -58,7 +63,7 @@ class TestEmployeeModel(TestCaseBase):
         self.assertEqual(len(employees), 1)
 
     def test_update_an_employee(self):
-
+        """It should Update en Employee"""
         employee = EmployeeFactory()
         logging.debug(employee)
         employee.id = None
@@ -76,6 +81,7 @@ class TestEmployeeModel(TestCaseBase):
         self.assertEqual(employees[0].department, "HR")
 
     def test_update_no_id(self):
+        """It should not Update an Employee with no id"""
         employee = EmployeeFactory()
         logging.debug(employee)
         employee.id = None
@@ -104,7 +110,7 @@ class TestModelQueries(TestCaseBase):
 
 
 class TestExceptionHandlers(TestCaseBase):
-
+    """Test REST Exception Handling"""
     @patch("service.models.db.session.commit")
     def test_create_exception(self, exception_mock):
         """It should catch a create exception"""
@@ -125,4 +131,3 @@ class TestExceptionHandlers(TestCaseBase):
         exception_mock.side_effect = Exception()
         employee = EmployeeFactory()
         self.assertRaises(DataValidationError, employee.delete)
-

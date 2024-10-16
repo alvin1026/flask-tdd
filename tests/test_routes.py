@@ -1,3 +1,6 @@
+"""
+Test routes for Employee API Service
+"""
 import os
 import logging
 from unittest import TestCase
@@ -7,9 +10,8 @@ from unittest.mock import patch, MagicMock  # noqa: F401
 from urllib.parse import quote_plus  # noqa: F401
 from wsgi import app
 
-# from service import create_app
 from service.common import status
-from service.models import Employee, Gender, db, DataValidationError  # noqa: F401
+from service.models import Employee, db, DataValidationError  # noqa: F401
 from tests.factories import EmployeeFactory
 
 
@@ -60,12 +62,14 @@ class TestEmployeeService(TestCase):
         return employees
 
     def test_index(self):
+        """It should call the Home Page"""
         response = self.client.get("/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(data["name"], "Employee Demo REST API Service")
 
     def test_health(self):
+        """It should be healthy"""
         response = self.client.get("/health")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
@@ -73,6 +77,7 @@ class TestEmployeeService(TestCase):
         self.assertEqual(data["message"], "Healthy")
 
     def test_get_employee_list(self):
+        """It should Get a list of Employees"""
         self._create_employees(5)
         response = self.client.get(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -96,7 +101,6 @@ class TestEmployeeService(TestCase):
         data = response.get_json()
         logging.debug("Response data = %s", data)
         self.assertIn("was not found", data["message"])
-
 
     def test_create_employee(self):
         """It should Create a new Employee"""
@@ -145,11 +149,12 @@ class TestSadPath(TestCase):
         self.client = app.test_client()
 
     def test_method_not_allowed(self):
-        """It should not allow update without a pet id"""
+        """It should not allow update without a employee id"""
         response = self.client.put(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def test_create_pet_no_data(self):
+    def test_create_employee_no_data(self):
+        """It should not Create an Employee with missing data"""
         response = self.client.post(BASE_URL, json={})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
