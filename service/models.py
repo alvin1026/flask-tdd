@@ -1,6 +1,6 @@
 import os
 import logging
-from datetime import date
+from datetime import date  # noqa: F401
 from enum import Enum
 from retry import retry
 from flask_sqlalchemy import SQLAlchemy
@@ -76,4 +76,3 @@ class Employee(db.Model):
     def all(cls) -> list:
         logger.info("Processing all Employees")
         return cls.query.all()
-

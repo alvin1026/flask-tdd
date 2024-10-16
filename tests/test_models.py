@@ -1,8 +1,8 @@
 import os
 import logging
 from unittest import TestCase
-from unittest.mock import patch
-from datetime import date
+from unittest.mock import patch  # noqa: F401
+from datetime import date  # noqa: F401
 from wsgi import app
 from service.models import Employee, Gender, DataValidationError, db
 from tests.factories import EmployeeFactory

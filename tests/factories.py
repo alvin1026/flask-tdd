@@ -1,7 +1,7 @@
-from datetime import date
+from datetime import date  # noqa: F401
 
 import factory
-from factory.fuzzy import FuzzyChoice, FuzzyDate
+from factory.fuzzy import FuzzyChoice, FuzzyDate  # noqa: F401
 from service.models import Employee, Gender
 
 

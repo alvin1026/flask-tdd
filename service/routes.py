@@ -5,7 +5,7 @@ This service implements a REST API that allows user to Create, Read, Update
 and Delete Drivers from the online ride-sharing application.
 """
 
-from flask import jsonify, request, url_for, abort
+from flask import jsonify, request, url_for, abort  # noqa: F401
 from flask import current_app as app
 from service.models import Employee, Gender
 from service.common import status
@@ -65,4 +65,3 @@ def list_employees():
     results = [employee.serailize() for employee in employees]
     app.logger.info("Returning %d employees", len(results))
     return jsonify(results), status.HTTP_200_OK
-

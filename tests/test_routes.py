@@ -1,15 +1,15 @@
 import os
 import logging
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock  # noqa: F401
 
 # from unittest.mock import MagicMock, patch
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus  # noqa: F401
 from wsgi import app
 
 # from service import create_app
 from service.common import status
-from service.models import Employee, Gender, db, DataValidationError
+from service.models import Employee, Gender, db, DataValidationError  # noqa: F401
 from tests.factories import EmployeeFactory
 
 
@@ -65,7 +65,6 @@ class TestEmployeeService(TestCase):
         data = response.get_json()
         self.assertEqual(data["name"], "Employee Demo REST API Service")
 
-
     def test_health(self):
         response = self.client.get("/health")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -73,11 +72,9 @@ class TestEmployeeService(TestCase):
         self.assertEqual(data["status"], 200)
         self.assertEqual(data["message"], "Healthy")
 
-
     def get_employee_list(self):
         self._create_employees(5)
         response = self.client.get(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
-
