@@ -1,0 +1,42 @@
+---
+# Python 3 with PostgreSQL
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+    hostname: localhost
+    container_name: flask-tdd
+    ports:
+     - 8080:8080
+    volumes:
+      - .:/app
+    command: gunicorn --bind 0.0.0.0:8080 wsgi:app
+    environment:
+      FLASK_APP: wsgi:app
+      FLASK_DEBUG: "True"
+      GUNICORN_BIND: "0.0.0.0:8000"
+      DATABASE_URI: postgresql+psycopg://postgres:pgs3cr3t@postgres:5432/employees
+    networks:
+      - dev
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15-alpine
+    # ports:
+    #   - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: pgs3cr3t
+      POSTGRES_DB: employees
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - dev
+
+volumes:
+  postgres:
+
+networks:
+  dev:

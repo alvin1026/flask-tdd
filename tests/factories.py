@@ -6,7 +6,7 @@ from service.models import Employee, Gender
 
 
 class EmployeeFactory(factory.Factory):
-    """Creates fake pets that you don't have to feed"""
+    """Creates fake employees that you don't have to feed"""
 
     class Meta:  # pylint: disable=too-few-public-methods
         """Maps factory to data model"""

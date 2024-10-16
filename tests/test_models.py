@@ -80,3 +80,49 @@ class TestEmployeeModel(TestCaseBase):
         logging.debug(employee)
         employee.id = None
         self.assertRaises(DataValidationError, employee.update)
+
+
+class TestModelQueries(TestCaseBase):
+    """Employee Model Query Tests"""
+
+    def test_find_employee(self):
+        """It should find an Employee by ID"""
+        employees = EmployeeFactory.create_batch(5)
+        for employee in employees:
+            employee.create()
+        logging.debug(employees)
+        # Make sure they got saved
+        self.assertEqual(len(Employee.all()), 5)
+        # find the 2nd employee in the list
+        employee = Employee.find(employees[1].id)
+        self.assertIsNot(employee, None)
+        self.assertEqual(employee.id, employees[1].id)
+        self.assertEqual(employee.first_name, employees[1].first_name)
+        self.assertEqual(employee.last_name, employees[1].last_name)
+        self.assertEqual(employee.department, employees[1].department)
+        self.assertEqual(employee.gender, employees[1].gender)
+
+
+class TestExceptionHandlers(TestCaseBase):
+
+    @patch("service.models.db.session.commit")
+    def test_create_exception(self, exception_mock):
+        """It should catch a create exception"""
+        exception_mock.side_effect = Exception()
+        employee = EmployeeFactory()
+        self.assertRaises(DataValidationError, employee.create)
+
+    @patch("service.models.db.session.commit")
+    def test_update_exception(self, exception_mock):
+        """It should catch a update exception"""
+        exception_mock.side_effect = Exception()
+        employee = EmployeeFactory()
+        self.assertRaises(DataValidationError, employee.update)
+
+    @patch("service.models.db.session.commit")
+    def test_delete_exception(self, exception_mock):
+        """It should catch a delete exception"""
+        exception_mock.side_effect = Exception()
+        employee = EmployeeFactory()
+        self.assertRaises(DataValidationError, employee.delete)
+

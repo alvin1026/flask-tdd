@@ -72,7 +72,56 @@ class Employee(db.Model):
             logger.error("Error updating record: %s", self)
             raise DataValidationError(e) from e
 
+    def delete(self) -> None:
+        """
+        Removes an Employee from the database
+        """
+        logger.info("Deleting %s %s", self.first_name, self.last_name)
+        try:
+            db.session.delete(self)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            logger.error("Error deleting record: %s", self)
+            raise DataValidationError(e) from e
+
     @classmethod
     def all(cls) -> list:
         logger.info("Processing all Employees")
         return cls.query.all()
+
+    @classmethod
+    def find(cls, employee_id: int):
+        """Finds en Employee by its ID"""
+        logger.info("Processing lookup for id %s ...", employee_id)
+        return cls.query.session.get(cls, employee_id)
+
+    def serialize(self) -> dict:
+        """Serializes an Employee into a dictionary"""
+        return {
+            "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "department": self.department,
+            "gender": self.gender.name,
+        }
+
+    def deserialize(self, data: dict):
+        """
+        Deserializes an Employee from a dictionary
+        :param data: a dictionary containing the Employee data
+        """
+        try:
+            self.first_name = data["first_name"]
+            self.last_name = data["last_name"]
+            self.department = data["department"]
+            self.gender = Gender[data["gender"].upper()]
+        except AttributeError as error:
+            raise DataValidationError("Invalid attribute: " + error.args[0]) from error
+        except KeyError as error:
+            raise DataValidationError("Invalid employee: missing " + error.args[0]) from error
+        except TypeError as error:
+            raise DataValidationError(
+                "Invalid employee: body of request contained bad or no data " + str(error)
+            )
+        return self
