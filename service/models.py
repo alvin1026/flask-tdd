@@ -1,6 +1,10 @@
+"""
+Models for Employee Demo Service
+
+All of the models are stored in this module
+"""
 import os
 import logging
-from datetime import date  # noqa: F401
 from enum import Enum
 from retry import retry
 from flask_sqlalchemy import SQLAlchemy
@@ -35,6 +39,9 @@ class Gender(Enum):
 
 
 class Employee(db.Model):
+    """
+    Class that represents an Employee
+    """
 
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(255), nullable=False)
@@ -47,9 +54,13 @@ class Employee(db.Model):
     last_updated = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now(), nullable=False)
 
     def __repr__(self):
+        """Employee representation"""
         return f"<Employee {self.first_name} {self.last_name} id=[{self.id}]>"
 
     def create(self) -> None:
+        """
+        Saves an Employee to the database
+        """
         logger.info("Creating %s %s", self.first_name, self.last_name)
         self.id = None
         try:
@@ -61,6 +72,9 @@ class Employee(db.Model):
             raise DataValidationError(e) from e
 
     def update(self) -> None:
+        """
+        Updates an Employee to the database
+        """
         logger.info("Saving %s %s", self.first_name, self.last_name)
         if not self.id:
             raise DataValidationError("Update called with empty ID field")
@@ -87,6 +101,7 @@ class Employee(db.Model):
 
     @classmethod
     def all(cls) -> list:
+        """Returns all Employees in the database"""
         logger.info("Processing all Employees")
         return cls.query.all()
 
@@ -123,5 +138,5 @@ class Employee(db.Model):
         except TypeError as error:
             raise DataValidationError(
                 "Invalid employee: body of request contained bad or no data " + str(error)
-            )
+            ) from error
         return self

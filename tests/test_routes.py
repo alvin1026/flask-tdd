@@ -4,14 +4,11 @@ Test routes for Employee API Service
 import os
 import logging
 from unittest import TestCase
-from unittest.mock import patch, MagicMock  # noqa: F401
 
-# from unittest.mock import MagicMock, patch
-from urllib.parse import quote_plus  # noqa: F401
 from wsgi import app
 
 from service.common import status
-from service.models import Employee, db, DataValidationError  # noqa: F401
+from service.models import Employee, db
 from tests.factories import EmployeeFactory
 
 

@@ -13,6 +13,7 @@ from service.common import status
 
 @app.route("/health")
 def health_check():
+    """Check if the service is running"""
     return jsonify(status=200, message="Healthy"), status.HTTP_200_OK
 
 
