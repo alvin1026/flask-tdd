@@ -40,7 +40,22 @@ db-init: ## Initializes the database tables
 
 ##@ Runtime
 
-.PHONY: run
-run: ## Run the service
+.PHONY: up
+up: ## Start Docker containers in detached mode (background)
 	$(info Starting service...)
-	honcho start
+	docker-compose up -d
+
+.PHONY: stop
+stop: ## Stop running the containers
+	$(info Stopping service...)
+	docker-compose stop
+
+.PHONY: down
+down: ## Remove stopped containers and associated networks
+	$(info Removing containers...)
+	docker-compose down
+
+.PHONY: rebuild
+rebuild: ## Rebuild the images and start containers
+	$(info Rebuilding the images and restarting containers...)
+	docker-compose up --build -d
